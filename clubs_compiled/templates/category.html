@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ categories[category]['name'] }}{% endblock %}
+{% block image %}{{ url_for('static', filename='images/banners/%s.png' % category) }}{% endblock %}
+{% block header %}{{ categories[category]['name'] }}{% endblock %}
+{% block description %}{{ categories[category]['description'] }}{% endblock %}
