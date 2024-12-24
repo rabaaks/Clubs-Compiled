@@ -1,0 +1,14 @@
+[project]
+name = "clubs_compiled"
+version = "1.0.0"
+description = "DRHS Clubs Website"
+dependencies = [
+    "flask",
+    "google-api-python-client",
+    "google-auth-oauthlib",
+    "google-auth-httplib2"
+]
+
+[build-system]
+requires = ["flit_core"]
+build-backend = "flit_core.buildapi"
