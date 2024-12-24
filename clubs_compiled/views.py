@@ -5,11 +5,8 @@ from flask import (
     Blueprint, render_template, abort, current_app
 )
 
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
+from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 
 categories = {
     'academic': {
@@ -42,6 +39,20 @@ categories = {
     }
 }
 
+questions = {
+    'sponsor_email': '3909c38a',
+    'name': '65494c2a',
+    'description': '27617192',
+    'sponsor': '5604a1cb',
+    'category': '3c12dca8',
+    'meeting_times': '0d8d7cd2',
+    'room_number': '314c7950',
+    'president_name': '11ccbcb7',
+    'website': '5bca57e6',
+    'president_email': '205cfdea',
+    'how_to_join': '0ede8215'
+}
+
 blueprint = Blueprint('views', __name__)
 
 @blueprint.context_processor
@@ -54,28 +65,28 @@ def home():
 
 @blueprint.route('/categories/<category>')
 def category(category):
-    if category not in categories.keys():
-        abort(404)
     clubs = []
 
-    creds = None
-    if os.path.exists(current_app.config['TOKEN']):
-        creds = Credentials.from_authorized_user_file(current_app.config['TOKEN'])
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(current_app.config['CREDENTIALS'], ['https://www.googleapis.com/auth/forms.responses.readonly'])
-            creds = flow.run_local_server()
-        with open(current_app.config['TOKEN'], 'w') as token:
-            token.write(creds.to_json())
+    f = open(current_app.config['FORM_ID'], 'r')
+    form_id = f.read()
+    f.close()
 
-    try:
-        service = build('forms', 'v1', credentials=creds)
-        with open(current_app.config['FORM_ID'], 'r') as f:
-            print(service.forms().responses().list(formId=f.read()).execute())
-    except HttpError as err:
-        print(err)
+    credentials = service_account.Credentials.from_service_account_file(current_app.config['API_KEY'], scopes=['https://www.googleapis.com/auth/forms.responses.readonly'])
+    service = build('forms', 'v1', credentials=credentials)
+
+    request = service.forms().responses().list(formId=form_id)
+    responses = request.execute()
+    clubs = []
+    for response in responses['responses']:
+        if categories[category]['name'] in [value['value'] for value in response['answers'][questions['category']]['textAnswers']['answers']]:
+            club = {}
+            for question, id in questions.items():
+                answers = [value['value'] for value in response['answers'][id]['textAnswers']['answers']]
+                club[question] = answers if len(answers) > 1 else answers[0]
+            clubs.append(club)
+            print(club)
+    
+    print(clubs)
 
     # TODO: Gather club data
     return render_template('category.html', clubs=clubs, category=category)

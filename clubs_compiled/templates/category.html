@@ -4,3 +4,25 @@
 {% block image %}{{ url_for('static', filename='images/banners/%s.png' % category) }}{% endblock %}
 {% block header %}{{ categories[category]['name'] }}{% endblock %}
 {% block description %}{{ categories[category]['description'] }}{% endblock %}
+
+{% block content %}
+{% for club in clubs %}
+    <div class="card-container">
+        <div class="card">
+            <div class="card-content">
+                <h1>{{ club['name'] }}</h1>
+                <h2>Sponsor:</h2>
+                <p>{{ club['sponsor'] }} {{ club['sponsor_email'] }}</p>
+                <h2>Club President:</h2>
+                <p>{{ club['president_name'] }} {{ club['president_email'] }}</p>
+                <h2>How to Join:</h2>
+                <p>{{ club['how_to_join'] }}</p>
+                <p>Room {{ club['room_number'] }}</p>
+                <p>{{ club['meeting_times'] }}</p>
+                <h2>Club Description</h2>
+                <p>{{ club['description'] }}</p>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
