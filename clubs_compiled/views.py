@@ -76,12 +76,13 @@ def category(category):
 
     request = service.forms().responses().list(formId=form_id)
     responses = request.execute()
+    print(responses)
     clubs = []
     for response in responses['responses']:
         if categories[category]['name'] in [value['value'] for value in response['answers'][questions['category']]['textAnswers']['answers']]:
             club = {}
             for question, id in questions.items():
-                answers = [value['value'] for value in response['answers'][id]['textAnswers']['answers']]
+                answers = [value['value'] for value in response['answers'].get(id, {'textAnswers': {'answers': [{'value': ''}]}})['textAnswers']['answers']]
                 club[question] = answers if len(answers) > 1 else answers[0]
             clubs.append(club)
             print(club)
