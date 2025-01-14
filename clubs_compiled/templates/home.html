@@ -4,3 +4,24 @@
 {% block image %}{{ url_for('static', filename='images/banners/deeprunentrance.jpg') }}{% endblock %}
 {% block header %}Deep Run Clubs{% endblock %}
 {% block description %}Lorem ipsum{% endblock %}
+
+{% block content %}
+<div class="grid-container"> 
+    {% for club in clubs %}
+    <div class="cardtwo">
+        <h1>Club name</h1>
+        <h1>{{ club['name'] }}</h1>
+        <h2>Sponsor:</h2>
+        <p>{{ club['sponsor'] }} {{ club['sponsor_email'] }}</p>
+        <h2>Club President:</h2>
+        <p>{{ club['president_name'] }} {{ club['president_email'] }}</p>
+        <h2>How to Join:</h2>
+        <p>{{ club['how_to_join'] }}</p>
+        <p>Room {{ club['room_number'] }}</p>
+        <p>{{ club['meeting_times'] }}</p>
+        <h2>Club Description</h2>
+        <p>{{ club['description'] }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

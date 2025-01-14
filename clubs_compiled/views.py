@@ -61,10 +61,18 @@ def base():
 
 @blueprint.route('/')
 def home():
-    return render_template('home.html')
+    clubs = get_clubs()
 
-@blueprint.route('/categories/<category>')
+    return render_template('home.html', clubs=clubs)
+
+@blueprint.route('/clubs/<category>')
 def category(category):
+    clubs = get_clubs(category)
+
+    # TODO: Gather club data
+    return render_template('category.html', clubs=clubs, category=category)
+
+def get_clubs(category=None):
     clubs = []
 
     f = open(current_app.config['FORM_ID'], 'r')
@@ -79,15 +87,14 @@ def category(category):
     print(responses)
     clubs = []
     for response in responses['responses']:
-        if categories[category]['name'] in [value['value'] for value in response['answers'][questions['category']]['textAnswers']['answers']]:
-            club = {}
-            for question, id in questions.items():
-                answers = [value['value'] for value in response['answers'].get(id, {'textAnswers': {'answers': [{'value': ''}]}})['textAnswers']['answers']]
-                club[question] = answers if len(answers) > 1 else answers[0]
-            clubs.append(club)
-            print(club)
+        if category != None:
+            if not (categories[category]['name'] in [value['value'] for value in response['answers'][questions['category']]['textAnswers']['answers']]):
+                continue
+        club = {}
+        for question, id in questions.items():
+            answers = [value['value'] for value in response['answers'].get(id, {'textAnswers': {'answers': [{'value': ''}]}})['textAnswers']['answers']]
+            club[question] = answers if len(answers) > 1 else answers[0]
+        clubs.append(club)
+        print(club)
     
-    print(clubs)
-
-    # TODO: Gather club data
-    return render_template('category.html', clubs=clubs, category=category)
+    return(clubs)
