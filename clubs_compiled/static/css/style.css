@@ -67,8 +67,6 @@ nav li:first-child {
     justify-content: flex-start;
 }
 
-
-
 .sidebar li {
     width: 100%;
 }
@@ -184,7 +182,7 @@ nav li:first-child {
     padding: 8px 16px;
 }
 
-.cardtwo{
+.cardtwo {
     padding: 2em;
 
     width: 80%;
@@ -197,7 +195,7 @@ nav li:first-child {
 
 .cardtwo:hover {
     background-color: #ececec; 
-    transform: translateY(-5px);
+    transform: translateY(-20px);
 }
 
 .grid-container{
